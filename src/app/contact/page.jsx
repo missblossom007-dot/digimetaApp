@@ -1,26 +1,31 @@
-"use client"
-import { useState } from 'react'
+"use client";
+import { useState } from "react";
 
-export default function Contact(){
+export default function Contact() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const waMessage = `Halo DigimetaShop!%0A%0ANama: ${formData.name}%0AEmail: ${formData.email}%0APesan: ${formData.message}`
-    window.open(`https://wa.me/6282141733187?text=${waMessage}`, '_blank')
-  }
+    e.preventDefault();
+    const waMessage = `Halo DigimetaShop!%0A%0ANama: ${formData.name}%0AEmail: ${formData.email}%0APesan: ${formData.message}`;
+    window.open(`https://wa.me/6282141733187?text=${waMessage}`, "_blank");
+  };
 
   return (
     <>
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-primary-light/30 to-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">Hubungi Kami</h1>
-          <p className="text-lg text-slate-600">Kami siap membantu Anda menemukan buku yang tepat atau menjawab pertanyaan Anda</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+            Hubungi Kami
+          </h1>
+          <p className="text-lg text-slate-600">
+            Kami siap membantu Anda menemukan buku yang tepat atau menjawab
+            pertanyaan Anda
+          </p>
         </div>
       </section>
 
@@ -30,10 +35,13 @@ export default function Contact(){
           <div className="grid md:grid-cols-2 gap-12">
             {/* Contact Info */}
             <div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-6">Mari Terhubung</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mb-6">
+                Mari Terhubung
+              </h2>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                Butuh buku tertentu atau ingin kerja sama? Tim kami siap membantu Anda 
-                menemukan solusi terbaik untuk kebutuhan literasi digital Anda.
+                Butuh buku tertentu atau ingin kerja sama? Tim kami siap
+                membantu Anda menemukan solusi terbaik untuk kebutuhan literasi
+                digital Anda.
               </p>
 
               {/* Contact Methods */}
@@ -44,8 +52,13 @@ export default function Contact(){
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-2">WhatsApp</h3>
-                    <p className="text-slate-600 mb-3">Respon cepat dalam hitungan menit</p>
-                    <a href="https://wa.me/6282141733187" className="inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-all duration-300 hover-lift">
+                    <p className="text-slate-600 mb-3">
+                      Respon cepat dalam hitungan menit
+                    </p>
+                    <a
+                      href="https://wa.me/6282141733187"
+                      className="inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full font-semibold transition-all duration-300 hover-lift"
+                    >
                       Chat Sekarang
                     </a>
                   </div>
@@ -57,8 +70,16 @@ export default function Contact(){
                   </div>
                   <div>
                     <h3 className="font-bold text-lg mb-2">Email</h3>
-                    <p className="text-slate-600 mb-2">info@digimetashop.id</p>
-                    <p className="text-sm text-slate-500">Respon dalam 24 jam</p>
+                    <a
+                      href="mailto:digimetateam@gmail.com?subject=Halo%20Tim%20DigimetaShop"
+                      target="_blank"
+                      className="text-black hover:text-red-500"
+                    >
+                      digimetateam@gmail.com
+                    </a>
+                    <p className="text-sm text-slate-500">
+                      Respon dalam 24 jam
+                    </p>
                   </div>
                 </div>
 
@@ -101,17 +122,21 @@ export default function Contact(){
             {/* Contact Form */}
             <div>
               <div className="glass-effect rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">Kirim Pesan</h2>
+                <h2 className="text-2xl font-bold text-slate-900 mb-6">
+                  Kirim Pesan
+                </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Nama Lengkap
                     </label>
-                    <input 
+                    <input
                       type="text"
-                      placeholder="Masukkan nama Anda" 
+                      placeholder="Masukkan nama Anda"
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       className="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-primary focus:outline-none transition-colors duration-200"
                       required
                     />
@@ -121,11 +146,13 @@ export default function Contact(){
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Email
                     </label>
-                    <input 
+                    <input
                       type="email"
-                      placeholder="nama@email.com" 
+                      placeholder="nama@email.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-primary focus:outline-none transition-colors duration-200"
                       required
                     />
@@ -135,16 +162,18 @@ export default function Contact(){
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Pesan / Request Buku
                     </label>
-                    <textarea 
-                      placeholder="Ceritakan kebutuhan Anda atau buku yang ingin direquest..." 
+                    <textarea
+                      placeholder="Ceritakan kebutuhan Anda atau buku yang ingin direquest..."
                       value={formData.message}
-                      onChange={(e) => setFormData({...formData, message: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
                       className="w-full p-4 border-2 border-slate-200 rounded-xl focus:border-primary focus:outline-none transition-colors duration-200 h-40 resize-none"
                       required
                     />
                   </div>
 
-                  <button 
+                  <button
                     type="submit"
                     className="w-full px-8 py-4 bg-primary hover:bg-primary-dark text-slate-900 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover-lift"
                   >
@@ -165,14 +194,20 @@ export default function Contact(){
       <section className="py-20 bg-gradient-to-br from-slate-50 to-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Mengapa Pelanggan Mempercayai Kami</h2>
-            <p className="text-lg text-slate-600">Komitmen kami untuk memberikan layanan terbaik</p>
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">
+              Mengapa Pelanggan Mempercayai Kami
+            </h2>
+            <p className="text-lg text-slate-600">
+              Komitmen kami untuk memberikan layanan terbaik
+            </p>
           </div>
           <div className="grid md:grid-cols-4 gap-6">
             <div className="text-center p-6 glass-effect rounded-2xl">
               <div className="text-4xl mb-4">⚡</div>
               <h3 className="font-bold mb-2">Respon Cepat</h3>
-              <p className="text-sm text-slate-600">Balasan dalam hitungan menit</p>
+              <p className="text-sm text-slate-600">
+                Balasan dalam hitungan menit
+              </p>
             </div>
             <div className="text-center p-6 glass-effect rounded-2xl">
               <div className="text-4xl mb-4">🤝</div>
@@ -182,7 +217,9 @@ export default function Contact(){
             <div className="text-center p-6 glass-effect rounded-2xl">
               <div className="text-4xl mb-4">✅</div>
               <h3 className="font-bold mb-2">Solusi Tepat</h3>
-              <p className="text-sm text-slate-600">Menemukan buku yang Anda cari</p>
+              <p className="text-sm text-slate-600">
+                Menemukan buku yang Anda cari
+              </p>
             </div>
             <div className="text-center p-6 glass-effect rounded-2xl">
               <div className="text-4xl mb-4">🔒</div>
@@ -193,5 +230,5 @@ export default function Contact(){
         </div>
       </section>
     </>
-  )
+  );
 }
