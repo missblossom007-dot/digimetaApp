@@ -1,6 +1,7 @@
 import Hero from "../components/Hero";
 import ServiceCard from "../components/ServiceCard";
 import BookCard from "../components/BookCard";
+import Countdown from "../components/Countdown";
 
 const books = [
   {
@@ -136,22 +137,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-2xl font-bold">12</div>
-                <div className="text-xs">Jam</div>
-              </div>
-              <div className="text-2xl">:</div>
-              <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-2xl font-bold">34</div>
-                <div className="text-xs">Menit</div>
-              </div>
-              <div className="text-2xl">:</div>
-              <div className="text-center bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                <div className="text-2xl font-bold">56</div>
-                <div className="text-xs">Detik</div>
-              </div>
-            </div>
+            <Countdown />
           </div>
         </div>
       </section>
