@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createPost } from "../../lib/backendless";
+// import { createPost } from "../../lib/backendless"; // Disabled
 
 export default function CreateBlog() {
   const router = useRouter();
@@ -118,12 +118,18 @@ export default function CreateBlog() {
         created: Date.now(),
       };
 
-      await createPost(postData);
+      // await createPost(postData); // Disabled Backendless
+      
+      // Save to localStorage instead
+      const existingPosts = JSON.parse(localStorage.getItem("dm_posts")) || [];
+      existingPosts.unshift(postData);
+      localStorage.setItem("dm_posts", JSON.stringify(existingPosts));
+      
       router.push("/blog");
     } catch (err) {
       console.error("Error creating post:", err);
       setError(
-        "Gagal menyimpan artikel. Pastikan Backendless sudah dikonfigurasi dengan benar."
+        "Gagal menyimpan artikel. Silakan coba lagi."
       );
     } finally {
       setLoading(false);

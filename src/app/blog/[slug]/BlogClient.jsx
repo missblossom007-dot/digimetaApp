@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { fetchPostBySlug } from "../../../lib/backendless";
+// import { fetchPostBySlug } from "../../../lib/backendless"; // Disabled
 
 export default function BlogClient({ slugParam }) {
   const [post, setPost] = useState(null);

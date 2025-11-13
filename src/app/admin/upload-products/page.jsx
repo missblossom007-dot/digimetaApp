@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Backendless from "../../../lib/backendlessupload";
 
 export default function UploadProducts() {
   const router = useRouter();
@@ -204,29 +203,49 @@ export default function UploadProducts() {
             product[header] = values[index]?.trim() || "";
           });
 
-          // ✅ Hapus kolom rating agar tidak error di Backendless
-          delete product.rating;
-
           products.push(product);
         }
 
+        if (products.length === 0) {
+          setError("Tidak ada data produk yang valid");
+          setLoading(false);
+          return;
+        }
+
         try {
-          // Simpan data satu per satu ke table "Products" di Backendless
-          const responses = await Promise.all(
-            products.map((p) => Backendless.Data.of("Products").save(p))
+          console.log("📦 Produk yang akan diupload:", products);
+
+          // Simpan ke localStorage (tanpa Backendless)
+          const existingProducts =
+            JSON.parse(localStorage.getItem("dm_products")) || [];
+          console.log("📦 Produk existing:", existingProducts.length);
+
+          const updatedProducts = [...existingProducts, ...products];
+          localStorage.setItem(
+            "dm_products",
+            JSON.stringify(updatedProducts)
           );
 
-          console.log(products)
+          console.log(
+            "✅ Total produk setelah upload:",
+            updatedProducts.length
+          );
 
           setSuccess(
-            `✅ Berhasil upload ${responses.length} produk ke Backendless!`
+            `✅ Berhasil upload ${products.length} produk! Total: ${updatedProducts.length} produk`
           );
           setLoading(false);
-          setTimeout(() => router.push("/admin/products"), 2500);
-        } catch (beErr) {
-          console.error("Backendless error:", beErr);
+
+          // Reset form setelah 3 detik
+          setTimeout(() => {
+            setFile(null);
+            setPreview([]);
+            setSuccess(null);
+          }, 3000);
+        } catch (saveErr) {
+          console.error("❌ Error saving:", saveErr);
           setError(
-            "Gagal upload ke Backendless. Periksa tabel dan permission."
+            `Gagal menyimpan produk: ${saveErr.message || "Unknown error"}`
           );
           setLoading(false);
         }
