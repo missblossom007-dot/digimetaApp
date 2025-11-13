@@ -3,7 +3,7 @@ import { useState } from "react";
 import { initMidtransSnap } from "../lib/midtrans";
 import { saveTransaction, updateTransactionStatus } from "../lib/transactions";
 
-export default function MidtransButton({ product, className }) {
+export default function MidtransButton({ product, className, buttonText }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -146,7 +146,7 @@ export default function MidtransButton({ product, className }) {
           </>
         ) : (
           <>
-            💳 Bayar Sekarang
+            {buttonText || "💳 Bayar Sekarang"}
           </>
         )}
       </button>

@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import MidtransButton from './MidtransButton'
 
 export default function BookCard({ book }) {
   const [imageError, setImageError] = useState(false)
@@ -60,22 +61,36 @@ export default function BookCard({ book }) {
           <span className="text-2xl font-bold text-primary">Rp {book.price.toLocaleString('id-ID')}</span>
           <span className="text-sm text-slate-400 line-through">Rp {book.originalPrice.toLocaleString('id-ID')}</span>
         </div>
-        <div className="flex gap-2">
-          <a 
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl"
-          >
-            🛒 Beli Sekarang
-          </a>
-          <button
-            onClick={() => setShowQR(!showQR)}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-full transition-all duration-300 shadow-md hover:shadow-xl"
-            title="Tampilkan QR Code"
-          >
-            📱
-          </button>
+        <div className="space-y-2">
+          {/* Midtrans Payment Button */}
+          <MidtransButton 
+            product={{
+              judul: book.title,
+              slug: book.title.toLowerCase().replace(/\s+/g, '-'),
+              harga: book.price,
+              objectId: book.id || book.slug
+            }}
+            className="w-full bg-primary hover:bg-primary-dark text-slate-900 font-semibold py-3 px-6 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl"
+          />
+          
+          {/* WhatsApp & QR Code */}
+          <div className="flex gap-2">
+            <a 
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl text-sm"
+            >
+              💬 WhatsApp
+            </a>
+            <button
+              onClick={() => setShowQR(!showQR)}
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-full transition-all duration-300 shadow-md hover:shadow-xl"
+              title="Tampilkan QR Code"
+            >
+              📱
+            </button>
+          </div>
         </div>
         
         {/* QR Code Modal */}

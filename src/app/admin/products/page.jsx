@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Backendless from "backendless";
+import MidtransButton from "../../../components/MidtransButton";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -250,21 +251,26 @@ export default function AdminProducts() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
+                          <MidtransButton
+                            product={product}
+                            buttonText="💳 Bayar"
+                            className="px-4 py-2 bg-primary hover:bg-primary-dark text-slate-900 font-semibold rounded-lg text-sm transition-colors shadow-md hover:shadow-lg whitespace-nowrap"
+                          />
                           <a
                             href={product.link_pemesanan}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
-                            title="Lihat Link Pemesanan"
+                            className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
+                            title="Link WhatsApp"
                           >
-                            🔗
+                            💬
                           </a>
                           <button
                             onClick={() =>
                               handleDelete(product.objectId, product.judul)
                             }
                             disabled={deleteLoading === product.objectId}
-                            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
+                            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors disabled:opacity-50"
                             title="Hapus Produk"
                           >
                             {deleteLoading === product.objectId ? "⏳" : "🗑️"}
