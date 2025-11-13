@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-// import { fetchPosts } from '../../lib/backendless' // Disabled
+import { fetchPosts } from '../../lib/backendless'
 
 export default function BlogList(){
   const [posts, setPosts] = useState([])
@@ -15,8 +15,7 @@ export default function BlogList(){
   async function loadPosts() {
     try {
       setLoading(true)
-      // const data = await fetchPosts() // Disabled Backendless
-      const data = [] // Use empty array or localStorage
+      const data = await fetchPosts()
       
       if (data && data.length > 0) {
         setPosts(data)

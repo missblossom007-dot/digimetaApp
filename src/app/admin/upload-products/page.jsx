@@ -1,12 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Backendless from "backendless";
 
 export default function UploadProducts() {
   const router = useRouter();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Initialize Backendless
+  useEffect(() => {
+    const APP_ID = "4A199CBD-443F-46F1-92AD-510866DF18E4";
+    const API_KEY = "E040786E-A130-438F-8A2A-16267112B9B8";
+
+    if (!Backendless.applicationId) {
+      Backendless.initApp(APP_ID, API_KEY);
+      console.log("✅ Backendless initialized for missblossom007@gmail.com");
+    }
+  }, []);
   const [success, setSuccess] = useState(null);
   const [preview, setPreview] = useState([]);
 
@@ -215,38 +227,38 @@ export default function UploadProducts() {
         try {
           console.log("📦 Produk yang akan diupload:", products);
 
-          // Simpan ke localStorage (tanpa Backendless)
-          const existingProducts =
-            JSON.parse(localStorage.getItem("dm_products")) || [];
-          console.log("📦 Produk existing:", existingProducts.length);
-
-          const updatedProducts = [...existingProducts, ...products];
-          localStorage.setItem(
-            "dm_products",
-            JSON.stringify(updatedProducts)
+          // Simpan ke Backendless table "Products"
+          const responses = await Promise.all(
+            products.map((product) =>
+              Backendless.Data.of("Products").save(product)
+            )
           );
 
-          console.log(
-            "✅ Total produk setelah upload:",
-            updatedProducts.length
-          );
+          console.log("✅ Berhasil upload ke Backendless:", responses);
 
           setSuccess(
-            `✅ Berhasil upload ${products.length} produk! Total: ${updatedProducts.length} produk`
+            `✅ Berhasil upload ${responses.length} produk ke Backendless!`
           );
           setLoading(false);
 
-          // Reset form setelah 3 detik
+          // Redirect ke halaman products setelah 2 detik
           setTimeout(() => {
-            setFile(null);
-            setPreview([]);
-            setSuccess(null);
-          }, 3000);
+            router.push("/admin/products");
+          }, 2000);
         } catch (saveErr) {
-          console.error("❌ Error saving:", saveErr);
-          setError(
-            `Gagal menyimpan produk: ${saveErr.message || "Unknown error"}`
-          );
+          console.error("❌ Backendless error:", saveErr);
+          
+          // Detailed error message
+          let errorMsg = "Gagal upload ke Backendless. ";
+          if (saveErr.code === 3033) {
+            errorMsg += "Table 'Products' tidak ditemukan. Buat table di Backendless Console.";
+          } else if (saveErr.code === 3064) {
+            errorMsg += "Permission denied. Cek User Permissions di Backendless.";
+          } else {
+            errorMsg += saveErr.message || "Unknown error";
+          }
+          
+          setError(errorMsg);
           setLoading(false);
         }
       };
