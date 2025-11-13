@@ -27,24 +27,7 @@ export default function MidtransButton({ product, className, buttonText }) {
         phone: "08123456789",
       };
 
-      // Prepare transaction data for Midtrans
-      const transactionData = {
-        transaction_details: {
-          order_id: orderId,
-          gross_amount: product.harga || product.price,
-        },
-        item_details: [
-          {
-            id: product.slug || "product",
-            price: product.harga || product.price,
-            quantity: 1,
-            name: product.judul || product.title || "Product",
-          },
-        ],
-        customer_details: customerDetails,
-      };
-
-      // Save transaction to Backendless
+      // Save transaction to Backendless first
       const backendlessTransaction = await saveTransaction({
         order_id: orderId,
         product_id: product.objectId || product.slug,
@@ -59,8 +42,39 @@ export default function MidtransButton({ product, className, buttonText }) {
 
       console.log("✅ Transaction saved to Backendless:", backendlessTransaction);
 
-      // Open Snap payment popup
-      snap.pay(JSON.stringify(transactionData), {
+      // Create Midtrans transaction via API route
+      const response = await fetch('/api/midtrans/create-transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+          amount: product.harga || product.price,
+          customerName: customerDetails.first_name,
+          customerEmail: customerDetails.email,
+          customerPhone: customerDetails.phone,
+          itemDetails: [
+            {
+              id: product.slug || "product",
+              price: product.harga || product.price,
+              quantity: 1,
+              name: product.judul || product.title || "Product",
+            },
+          ],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create transaction');
+      }
+
+      console.log("✅ Snap token received:", data.snapToken);
+
+      // Open Snap payment popup with token
+      snap.pay(data.snapToken, {
         onSuccess: async (result) => {
           console.log("✅ Payment success:", result);
           
