@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { initMidtransSnap } from "../lib/midtrans";
+import { saveTransaction, updateTransactionStatus } from "../lib/transactions";
 
 export default function MidtransButton({ product, className }) {
   const [loading, setLoading] = useState(false);
@@ -19,7 +20,14 @@ export default function MidtransButton({ product, className }) {
         .toString(36)
         .substr(2, 9)}`;
 
-      // Prepare transaction data
+      // Customer details (bisa diganti dengan form input)
+      const customerDetails = {
+        first_name: "Customer",
+        email: "customer@example.com",
+        phone: "08123456789",
+      };
+
+      // Prepare transaction data for Midtrans
       const transactionData = {
         transaction_details: {
           order_id: orderId,
@@ -33,29 +41,79 @@ export default function MidtransButton({ product, className }) {
             name: product.judul || product.title || "Product",
           },
         ],
-        customer_details: {
-          first_name: "Customer",
-          email: "customer@example.com",
-          phone: "08123456789",
-        },
+        customer_details: customerDetails,
       };
+
+      // Save transaction to Backendless
+      const backendlessTransaction = await saveTransaction({
+        order_id: orderId,
+        product_id: product.objectId || product.slug,
+        product_name: product.judul || product.title,
+        amount: product.harga || product.price,
+        status: "pending",
+        customer_name: customerDetails.first_name,
+        customer_email: customerDetails.email,
+        customer_phone: customerDetails.phone,
+        created: new Date().getTime(),
+      });
+
+      console.log("✅ Transaction saved to Backendless:", backendlessTransaction);
 
       // Open Snap payment popup
       snap.pay(JSON.stringify(transactionData), {
-        onSuccess: (result) => {
+        onSuccess: async (result) => {
           console.log("✅ Payment success:", result);
+          
+          // Update transaction status in Backendless
+          try {
+            await updateTransactionStatus(
+              backendlessTransaction.objectId,
+              "success",
+              result
+            );
+            console.log("✅ Transaction status updated to success");
+          } catch (err) {
+            console.error("❌ Error updating transaction status:", err);
+          }
+          
           alert("Pembayaran berhasil! Terima kasih.");
           setLoading(false);
           // Redirect to success page
           window.location.href = `/success?order_id=${result.order_id}`;
         },
-        onPending: (result) => {
+        onPending: async (result) => {
           console.log("⏳ Payment pending:", result);
+          
+          // Update transaction status in Backendless
+          try {
+            await updateTransactionStatus(
+              backendlessTransaction.objectId,
+              "pending",
+              result
+            );
+            console.log("✅ Transaction status updated to pending");
+          } catch (err) {
+            console.error("❌ Error updating transaction status:", err);
+          }
+          
           alert("Pembayaran pending. Silakan selesaikan pembayaran Anda.");
           setLoading(false);
         },
-        onError: (result) => {
+        onError: async (result) => {
           console.error("❌ Payment error:", result);
+          
+          // Update transaction status in Backendless
+          try {
+            await updateTransactionStatus(
+              backendlessTransaction.objectId,
+              "failed",
+              result
+            );
+            console.log("✅ Transaction status updated to failed");
+          } catch (err) {
+            console.error("❌ Error updating transaction status:", err);
+          }
+          
           setError("Pembayaran gagal. Silakan coba lagi.");
           setLoading(false);
         },
