@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { createTransaction, openPaymentPopup } from "../lib/midtrans";
+import { initMidtransSnap } from "../lib/midtrans";
 
 export default function MidtransButton({ product, className }) {
   const [loading, setLoading] = useState(false);
@@ -11,46 +11,53 @@ export default function MidtransButton({ product, className }) {
     setError(null);
 
     try {
+      // Initialize Snap
+      const snap = await initMidtransSnap();
+
       // Generate unique order ID
       const orderId = `ORDER-${Date.now()}-${Math.random()
         .toString(36)
         .substr(2, 9)}`;
 
-      // Prepare order data
-      const orderData = {
-        orderId,
-        amount: product.harga || product.price,
-        customerName: "Customer", // Bisa diganti dengan form input
-        customerEmail: "customer@example.com", // Bisa diganti dengan form input
-        customerPhone: "08123456789", // Bisa diganti dengan form input
-        itemDetails: [
+      // Prepare transaction data
+      const transactionData = {
+        transaction_details: {
+          order_id: orderId,
+          gross_amount: product.harga || product.price,
+        },
+        item_details: [
           {
-            id: product.slug,
+            id: product.slug || "product",
             price: product.harga || product.price,
             quantity: 1,
-            name: product.judul || product.title,
+            name: product.judul || product.title || "Product",
           },
         ],
+        customer_details: {
+          first_name: "Customer",
+          email: "customer@example.com",
+          phone: "08123456789",
+        },
       };
 
-      // Create transaction and get snap token
-      const transaction = await createTransaction(orderData);
-
-      // Open Midtrans payment popup
-      await openPaymentPopup(transaction.token, {
+      // Open Snap payment popup
+      snap.pay(JSON.stringify(transactionData), {
         onSuccess: (result) => {
-          console.log("Payment success:", result);
+          console.log("✅ Payment success:", result);
           alert("Pembayaran berhasil! Terima kasih.");
-          // Redirect to success page or send download link
-          window.location.href = `/success?order_id=${orderId}`;
+          setLoading(false);
+          // Redirect to success page
+          window.location.href = `/success?order_id=${result.order_id}`;
         },
         onPending: (result) => {
-          console.log("Payment pending:", result);
+          console.log("⏳ Payment pending:", result);
           alert("Pembayaran pending. Silakan selesaikan pembayaran Anda.");
+          setLoading(false);
         },
         onError: (result) => {
-          console.error("Payment error:", result);
+          console.error("❌ Payment error:", result);
           setError("Pembayaran gagal. Silakan coba lagi.");
+          setLoading(false);
         },
         onClose: () => {
           console.log("Payment popup closed");
@@ -58,8 +65,8 @@ export default function MidtransButton({ product, className }) {
         },
       });
     } catch (err) {
-      console.error("Error processing payment:", err);
-      setError("Gagal memproses pembayaran. Silakan coba lagi.");
+      console.error("❌ Error processing payment:", err);
+      setError(`Gagal memproses pembayaran: ${err.message}`);
       setLoading(false);
     }
   }

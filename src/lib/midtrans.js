@@ -1,15 +1,19 @@
 // Midtrans Configuration
-const MIDTRANS_SERVER_KEY = process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || 'YOUR_SERVER_KEY'
-const MIDTRANS_CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'YOUR_CLIENT_KEY'
+const MIDTRANS_CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-oFOsaBvke_JvFpYc'
+const MIDTRANS_MERCHANT_ID = process.env.NEXT_PUBLIC_MIDTRANS_MERCHANT_ID || 'G445401830'
 const MIDTRANS_IS_PRODUCTION = process.env.NEXT_PUBLIC_MIDTRANS_PRODUCTION === 'true'
 
-const MIDTRANS_API_URL = MIDTRANS_IS_PRODUCTION
-  ? 'https://app.midtrans.com/snap/v1'
-  : 'https://app.sandbox.midtrans.com/snap/v1'
+const MIDTRANS_SNAP_URL = MIDTRANS_IS_PRODUCTION
+  ? 'https://app.midtrans.com/snap/snap.js'
+  : 'https://app.sandbox.midtrans.com/snap/snap.js'
 
-// Create Midtrans Transaction
-export async function createTransaction(orderData) {
+// Create Midtrans Snap Token (via backend/API route recommended)
+// For now, we'll use direct Snap integration
+export async function createSnapToken(orderData) {
   try {
+    // In production, this should be done via backend API route
+    // For now, we'll use Snap.js directly with client key
+    
     const {
       orderId,
       amount,
@@ -19,40 +23,17 @@ export async function createTransaction(orderData) {
       itemDetails,
     } = orderData
 
-    const payload = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount: amount,
-      },
-      customer_details: {
-        first_name: customerName,
-        email: customerEmail,
-        phone: customerPhone,
-      },
-      item_details: itemDetails,
-      credit_card: {
-        secure: true,
-      },
+    // Return order data for Snap.js
+    return {
+      orderId,
+      amount,
+      customerName,
+      customerEmail,
+      customerPhone,
+      itemDetails,
     }
-
-    const response = await fetch(`${MIDTRANS_API_URL}/transactions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        Authorization: `Basic ${btoa(MIDTRANS_SERVER_KEY + ':')}`,
-      },
-      body: JSON.stringify(payload),
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to create transaction')
-    }
-
-    const data = await response.json()
-    return data
   } catch (error) {
-    console.error('Error creating Midtrans transaction:', error)
+    console.error('Error creating Snap token:', error)
     throw error
   }
 }
@@ -91,13 +72,20 @@ export function initMidtransSnap() {
       return
     }
 
+    // Check if Snap already loaded
+    if (window.snap) {
+      resolve(window.snap)
+      return
+    }
+
     // Load Midtrans Snap script
     const script = document.createElement('script')
-    script.src = MIDTRANS_IS_PRODUCTION
-      ? 'https://app.midtrans.com/snap/snap.js'
-      : 'https://app.sandbox.midtrans.com/snap/snap.js'
+    script.src = MIDTRANS_SNAP_URL
     script.setAttribute('data-client-key', MIDTRANS_CLIENT_KEY)
-    script.onload = () => resolve(window.snap)
+    script.onload = () => {
+      console.log('✅ Midtrans Snap loaded')
+      resolve(window.snap)
+    }
     script.onerror = () => reject(new Error('Failed to load Midtrans Snap'))
     document.body.appendChild(script)
   })
@@ -132,4 +120,4 @@ export async function openPaymentPopup(snapToken, callbacks = {}) {
   }
 }
 
-export { MIDTRANS_CLIENT_KEY, MIDTRANS_IS_PRODUCTION }
+export { MIDTRANS_CLIENT_KEY, MIDTRANS_MERCHANT_ID, MIDTRANS_IS_PRODUCTION }
