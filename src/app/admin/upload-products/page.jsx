@@ -27,17 +27,45 @@ export default function UploadProducts() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target.result;
-      const lines = text.split("\n");
-      const headers = lines[0].split(",");
+      const lines = text.split("\n").filter(line => line.trim());
+      
+      if (lines.length === 0) {
+        setError("File CSV kosong");
+        return;
+      }
 
+      // Parse CSV dengan handling quotes
+      function parseCSVLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        result.push(current.trim());
+        return result;
+      }
+
+      const headers = parseCSVLine(lines[0]);
       const data = [];
+      
       for (let i = 1; i < Math.min(lines.length, 6); i++) {
         // Preview first 5 rows
         if (lines[i].trim()) {
-          const values = lines[i].split(",");
+          const values = parseCSVLine(lines[i]);
           const row = {};
           headers.forEach((header, index) => {
-            row[header.trim()] = values[index]?.trim() || "";
+            row[header] = values[index] || "";
           });
           data.push(row);
         }
@@ -47,57 +75,108 @@ export default function UploadProducts() {
     reader.readAsText(file);
   }
 
-  // async function handleUpload() {
-  //   if (!file) {
-  //     setError("Please select a file first");
-  //     return;
-  //   }
+  async function handleUpload() {
+    if (!file) {
+      setError("Silakan pilih file CSV terlebih dahulu");
+      return;
+    }
 
-  //   setLoading(true);
-  //   setError(null);
-  //   setSuccess(null);
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
 
-  //   try {
-  //     const reader = new FileReader();
-  //     reader.onload = async (e) => {
-  //       const text = e.target.result;
-  //       const lines = text.split("\n");
-  //       const headers = lines[0].split(",").map((h) => h.trim());
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const text = e.target.result;
+          const lines = text.split("\n").filter(line => line.trim());
+          
+          if (lines.length < 2) {
+            throw new Error("File CSV kosong atau tidak valid");
+          }
 
-  //       const products = [];
-  //       for (let i = 1; i < lines.length; i++) {
-  //         if (lines[i].trim()) {
-  //           const values = lines[i].split(",");
-  //           const product = {};
-  //           headers.forEach((header, index) => {
-  //             product[header] = values[index]?.trim() || "";
-  //           });
-  //           products.push(product);
-  //         }
-  //       }
+          // Parse CSV dengan handling quotes
+          function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+              const char = line[i];
+              
+              if (char === '"') {
+                inQuotes = !inQuotes;
+              } else if (char === ',' && !inQuotes) {
+                result.push(current.trim());
+                current = '';
+              } else {
+                current += char;
+              }
+            }
+            result.push(current.trim());
+            return result;
+          }
 
-  //       // Save to Backendless or localStorage
-  //       const existingProducts =
-  //         JSON.parse(localStorage.getItem("dm_products")) || [];
-  //       const updatedProducts = [...existingProducts, ...products];
-  //       localStorage.setItem("dm_products", JSON.stringify(updatedProducts));
+          const headers = parseCSVLine(lines[0]);
+          const products = [];
+          
+          for (let i = 1; i < lines.length; i++) {
+            if (lines[i].trim()) {
+              const values = parseCSVLine(lines[i]);
+              const product = {};
+              headers.forEach((header, index) => {
+                product[header] = values[index] || "";
+              });
+              products.push(product);
+            }
+          }
 
-  //       setSuccess(
-  //         `Successfully uploaded ${products.length} products!`
-  //       );
-  //       setLoading(false);
+          if (products.length === 0) {
+            throw new Error("Tidak ada data produk yang valid");
+          }
 
-  //       // Redirect after 2 seconds
-  //       setTimeout(() => {
-  //         router.push("/admin/products");
-  //       }, 2000);
-  //     };
-  //     reader.readAsText(file);
-  //   } catch (err) {
-  //     console.error("Error uploading products:", err);
-  //     setError("Failed to upload products. Please try again.");
-  //     setLoading(false);
-  //   }
+          console.log("📦 Produk yang akan diupload:", products);
+
+          // Save to localStorage
+          const existingProducts =
+            JSON.parse(localStorage.getItem("dm_products")) || [];
+          console.log("📦 Produk existing:", existingProducts.length);
+          
+          const updatedProducts = [...existingProducts, ...products];
+          localStorage.setItem("dm_products", JSON.stringify(updatedProducts));
+          
+          console.log("✅ Total produk setelah upload:", updatedProducts.length);
+
+          setSuccess(
+            `✅ Berhasil upload ${products.length} produk! Total: ${updatedProducts.length} produk`
+          );
+          setLoading(false);
+
+          // Optional: Redirect after success
+          setTimeout(() => {
+            setFile(null);
+            setPreview([]);
+          }, 3000);
+        } catch (parseError) {
+          console.error("Error parsing CSV:", parseError);
+          setError(parseError.message || "Gagal memproses file CSV");
+          setLoading(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        setError("Gagal membaca file. Silakan coba lagi.");
+        setLoading(false);
+      };
+      
+      reader.readAsText(file);
+    } catch (err) {
+      console.error("Error uploading products:", err);
+      setError("Gagal upload produk. Silakan coba lagi.");
+      setLoading(false);
+    }
+  }
   // }
 
   async function handleUpload() {
@@ -136,6 +215,8 @@ export default function UploadProducts() {
           const responses = await Promise.all(
             products.map((p) => Backendless.Data.of("Products").save(p))
           );
+
+          console.log(products)
 
           setSuccess(
             `✅ Berhasil upload ${responses.length} produk ke Backendless!`
