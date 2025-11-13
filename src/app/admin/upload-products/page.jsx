@@ -5,9 +5,26 @@ import Backendless from "backendless";
 
 export default function UploadProducts() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("csv"); // 'csv' or 'manual'
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [preview, setPreview] = useState([]);
+
+  // Manual form state
+  const [manualForm, setManualForm] = useState({
+    judul: "",
+    slug: "",
+    harga: "",
+    link_pemesanan: "",
+    cover_url: "",
+    deskripsi: "",
+    penulis: "",
+    kategori: "Umum",
+    rating: "4.5",
+    file_ebook_url: "",
+  });
 
   // Initialize Backendless
   useEffect(() => {
@@ -19,8 +36,6 @@ export default function UploadProducts() {
       console.log("✅ Backendless initialized for missblossom007@gmail.com");
     }
   }, []);
-  const [success, setSuccess] = useState(null);
-  const [preview, setPreview] = useState([]);
 
   function handleFileChange(e) {
     const selectedFile = e.target.files[0];

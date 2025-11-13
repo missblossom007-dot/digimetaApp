@@ -100,12 +100,20 @@ export default function AdminProducts() {
               Kelola produk ebook dari Backendless
             </p>
           </div>
-          <Link
-            href="/admin/upload-products"
-            className="px-6 py-3 bg-primary hover:bg-primary-dark text-slate-900 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            ➕ Upload Produk
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              href="/admin/products/add"
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              ➕ Tambah Manual
+            </Link>
+            <Link
+              href="/admin/upload-products"
+              className="px-6 py-3 bg-primary hover:bg-primary-dark text-slate-900 font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              📤 Upload CSV
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}
@@ -250,12 +258,19 @@ export default function AdminProducts() {
                         {formatDate(product.created)}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center gap-2 flex-wrap">
                           <MidtransButton
                             product={product}
-                            buttonText="💳 Bayar"
-                            className="px-4 py-2 bg-primary hover:bg-primary-dark text-slate-900 font-semibold rounded-lg text-sm transition-colors shadow-md hover:shadow-lg whitespace-nowrap"
+                            buttonText="💳"
+                            className="px-3 py-2 bg-primary hover:bg-primary-dark text-slate-900 font-semibold rounded-lg text-sm transition-colors shadow-md hover:shadow-lg"
                           />
+                          <Link
+                            href={`/admin/products/edit/${product.objectId}`}
+                            className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors"
+                            title="Edit Produk"
+                          >
+                            ✏️
+                          </Link>
                           <a
                             href={product.link_pemesanan}
                             target="_blank"
