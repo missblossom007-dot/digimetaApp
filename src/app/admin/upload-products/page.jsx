@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Backendless from "../../../lib/backendlessupload";
 
 export default function UploadProducts() {
   const router = useRouter();
@@ -46,6 +47,59 @@ export default function UploadProducts() {
     reader.readAsText(file);
   }
 
+  // async function handleUpload() {
+  //   if (!file) {
+  //     setError("Please select a file first");
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setError(null);
+  //   setSuccess(null);
+
+  //   try {
+  //     const reader = new FileReader();
+  //     reader.onload = async (e) => {
+  //       const text = e.target.result;
+  //       const lines = text.split("\n");
+  //       const headers = lines[0].split(",").map((h) => h.trim());
+
+  //       const products = [];
+  //       for (let i = 1; i < lines.length; i++) {
+  //         if (lines[i].trim()) {
+  //           const values = lines[i].split(",");
+  //           const product = {};
+  //           headers.forEach((header, index) => {
+  //             product[header] = values[index]?.trim() || "";
+  //           });
+  //           products.push(product);
+  //         }
+  //       }
+
+  //       // Save to Backendless or localStorage
+  //       const existingProducts =
+  //         JSON.parse(localStorage.getItem("dm_products")) || [];
+  //       const updatedProducts = [...existingProducts, ...products];
+  //       localStorage.setItem("dm_products", JSON.stringify(updatedProducts));
+
+  //       setSuccess(
+  //         `Successfully uploaded ${products.length} products!`
+  //       );
+  //       setLoading(false);
+
+  //       // Redirect after 2 seconds
+  //       setTimeout(() => {
+  //         router.push("/admin/products");
+  //       }, 2000);
+  //     };
+  //     reader.readAsText(file);
+  //   } catch (err) {
+  //     console.error("Error uploading products:", err);
+  //     setError("Failed to upload products. Please try again.");
+  //     setLoading(false);
+  //   }
+  // }
+
   async function handleUpload() {
     if (!file) {
       setError("Please select a file first");
@@ -60,49 +114,69 @@ export default function UploadProducts() {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const text = e.target.result;
-        const lines = text.split("\n");
+        const lines = text.split(/\r?\n/).filter((line) => line.trim() !== ""); // ✅ lines didefinisikan di sini
         const headers = lines[0].split(",").map((h) => h.trim());
 
         const products = [];
         for (let i = 1; i < lines.length; i++) {
-          if (lines[i].trim()) {
-            const values = lines[i].split(",");
-            const product = {};
-            headers.forEach((header, index) => {
-              product[header] = values[index]?.trim() || "";
-            });
-            products.push(product);
-          }
+          const values = lines[i].split(",");
+          const product = {};
+          headers.forEach((header, index) => {
+            product[header] = values[index]?.trim() || "";
+          });
+
+          // ✅ Hapus kolom rating agar tidak error di Backendless
+          delete product.rating;
+
+          products.push(product);
         }
 
-        // Save to Backendless or localStorage
-        const existingProducts =
-          JSON.parse(localStorage.getItem("dm_products")) || [];
-        const updatedProducts = [...existingProducts, ...products];
-        localStorage.setItem("dm_products", JSON.stringify(updatedProducts));
+        try {
+          // Simpan data satu per satu ke table "Products" di Backendless
+          const responses = await Promise.all(
+            products.map((p) => Backendless.Data.of("Products").save(p))
+          );
 
-        setSuccess(
-          `Successfully uploaded ${products.length} products!`
-        );
-        setLoading(false);
-
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          router.push("/admin/products");
-        }, 2000);
+          setSuccess(
+            `✅ Berhasil upload ${responses.length} produk ke Backendless!`
+          );
+          setLoading(false);
+          setTimeout(() => router.push("/admin/products"), 2500);
+        } catch (beErr) {
+          console.error("Backendless error:", beErr);
+          setError(
+            "Gagal upload ke Backendless. Periksa tabel dan permission."
+          );
+          setLoading(false);
+        }
       };
+
+      // ✅ Pastikan read dijalankan terakhir
       reader.readAsText(file);
     } catch (err) {
-      console.error("Error uploading products:", err);
-      setError("Failed to upload products. Please try again.");
+      console.error("Error reading file:", err);
+      setError("Gagal membaca file CSV. Coba ulangi.");
       setLoading(false);
     }
   }
 
+  //   function downloadTemplate() {
+  //     const template = `judul,slug,deskripsi,cover_url,harga,link_pemesanan,penulis,kategori,tag,anggel_riil,bahasa,file_ebook_url,meta_seo,deskripsi_lengkap,rating
+  // Ebook Contoh 1,ebook-contoh-1,Deskripsi lengkap untuk Ebook Contoh 1,https://drive.google.com/example1,40000,https://midtrans.com/example1,Indri,Umum,ebook;belajar,2025-01-01,Indonesia,https://drive.google.com/file1,Ebook Contoh 1 - Belajar,Deskripsi lengkap untuk ebook contoh 1,4.5
+  // Ebook Contoh 2,ebook-contoh-2,Deskripsi lengkap untuk Ebook Contoh 2,https://drive.google.com/example2,50000,https://midtrans.com/example2,Indri,Umum,ebook;belajar,2025-01-02,Indonesia,https://drive.google.com/file2,Ebook Contoh 2 - Belajar,Deskripsi lengkap untuk ebook contoh 2,4.8`;
+
+  //     const blob = new Blob([template], { type: "text/csv" });
+  //     const url = window.URL.createObjectURL(blob);
+  //     const a = document.createElement("a");
+  //     a.href = url;
+  //     a.download = "template-products.csv";
+  //     a.click();
+  //     window.URL.revokeObjectURL(url);
+  //   }
   function downloadTemplate() {
-    const template = `judul,slug,deskripsi,cover_url,harga,link_pemesanan,penulis,kategori,tag,anggel_riil,bahasa,file_ebook_url,meta_seo,deskripsi_lengkap,rating
-Ebook Contoh 1,ebook-contoh-1,Deskripsi lengkap untuk Ebook Contoh 1,https://drive.google.com/example1,40000,https://midtrans.com/example1,Indri,Umum,ebook;belajar,2025-01-01,Indonesia,https://drive.google.com/file1,Ebook Contoh 1 - Belajar,Deskripsi lengkap untuk ebook contoh 1,4.5
-Ebook Contoh 2,ebook-contoh-2,Deskripsi lengkap untuk Ebook Contoh 2,https://drive.google.com/example2,50000,https://midtrans.com/example2,Indri,Umum,ebook;belajar,2025-01-02,Indonesia,https://drive.google.com/file2,Ebook Contoh 2 - Belajar,Deskripsi lengkap untuk ebook contoh 2,4.8`;
+    const template = `judul,slug,deskripsi,cover_url,harga,link_pemesanan,penulis,kategori,tag,anggel_riil,bahasa,file_ebook_url,meta_seo,deskripsi_lengkap
+Ebook Contoh 1,ebook-contoh-1,Deskripsi lengkap untuk Ebook Contoh 1,https://drive.google.com/example1,40000,https://midtrans.com/example1,Indri,Umum,ebook;belajar,2025-01-01,Indonesia,https://drive.google.com/file1,Ebook Contoh 1 - Belajar,Deskripsi lengkap untuk ebook contoh 1
+Ebook Contoh 2,ebook-contoh-2,Deskripsi lengkap untuk Ebook Contoh 2,https://drive.google.com/example2,50000,https://midtrans.com/example2,Indri,Umum,ebook;belajar,2025-01-02,Indonesia,https://drive.google.com/file2,Ebook Contoh 2 - Belajar,Deskripsi lengkap untuk ebook contoh 2`;
 
     const blob = new Blob([template], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -287,9 +361,7 @@ Ebook Contoh 2,ebook-contoh-2,Deskripsi lengkap untuk Ebook Contoh 2,https://dri
 
             {/* Tips */}
             <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-md p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">
-                💡 Tips
-              </h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-4">💡 Tips</h3>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li className="flex items-start gap-2">
                   <span className="text-green-500">✓</span>

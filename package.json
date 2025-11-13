@@ -9,6 +9,7 @@
     "export": "next build"
   },
   "dependencies": {
+    "backendless": "^7.4.7",
     "framer-motion": "^12.23.24",
     "next": "13.5.4",
     "next-seo": "^5.2.0",
