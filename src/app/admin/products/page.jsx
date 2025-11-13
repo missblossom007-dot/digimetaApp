@@ -118,23 +118,13 @@ export default function AdminProducts() {
 
         {/* Stats */}
         {!loading && products.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
             <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">📚</div>
               <div className="text-2xl font-bold text-slate-900">
                 {products.length}
               </div>
               <div className="text-sm text-slate-600">Total Produk</div>
-            </div>
-            <div className="bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="text-3xl mb-2">💰</div>
-              <div className="text-2xl font-bold text-slate-900">
-                {formatPrice(
-                  products.reduce((sum, p) => sum + (p.harga || 0), 0) /
-                    products.length
-                )}
-              </div>
-              <div className="text-sm text-slate-600">Harga Rata-rata</div>
             </div>
             <div className="bg-gradient-to-br from-yellow-50 to-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">⭐</div>
@@ -195,9 +185,6 @@ export default function AdminProducts() {
                       Kategori
                     </th>
                     <th className="px-4 py-4 text-left text-sm font-semibold text-slate-700">
-                      Harga
-                    </th>
-                    <th className="px-4 py-4 text-left text-sm font-semibold text-slate-700">
                       Rating
                     </th>
                     <th className="px-4 py-4 text-center text-sm font-semibold text-slate-700">
@@ -234,9 +221,6 @@ export default function AdminProducts() {
                         <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
                           {product.kategori || "Umum"}
                         </span>
-                      </td>
-                      <td className="px-4 py-4 font-semibold text-slate-900">
-                        {formatPrice(product.harga)}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-1">
