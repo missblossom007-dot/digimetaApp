@@ -1,11 +1,19 @@
 // Midtrans Configuration
 const MIDTRANS_CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || 'Mid-client-oFOsaBvke_JvFpYc'
+const MIDTRANS_SERVER_KEY = process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY || 'Mid-server-AT0ZZkIQAQRzC0VyFQFCS9nKr'
 const MIDTRANS_MERCHANT_ID = process.env.NEXT_PUBLIC_MIDTRANS_MERCHANT_ID || 'G445401830'
 const MIDTRANS_IS_PRODUCTION = process.env.NEXT_PUBLIC_MIDTRANS_PRODUCTION === 'true'
 
 const MIDTRANS_SNAP_URL = MIDTRANS_IS_PRODUCTION
   ? 'https://app.midtrans.com/snap/snap.js'
   : 'https://app.sandbox.midtrans.com/snap/snap.js'
+
+console.log('🔑 Midtrans Config:', {
+  clientKey: MIDTRANS_CLIENT_KEY,
+  merchantId: MIDTRANS_MERCHANT_ID,
+  isProduction: MIDTRANS_IS_PRODUCTION,
+  snapUrl: MIDTRANS_SNAP_URL
+})
 
 // Create Midtrans Snap Token (via backend/API route recommended)
 // For now, we'll use direct Snap integration
@@ -120,4 +128,4 @@ export async function openPaymentPopup(snapToken, callbacks = {}) {
   }
 }
 
-export { MIDTRANS_CLIENT_KEY, MIDTRANS_MERCHANT_ID, MIDTRANS_IS_PRODUCTION }
+export { MIDTRANS_CLIENT_KEY, MIDTRANS_SERVER_KEY, MIDTRANS_MERCHANT_ID, MIDTRANS_IS_PRODUCTION }
