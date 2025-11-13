@@ -168,3 +168,51 @@ Semua CTA button terintegrasi dengan WhatsApp untuk:
 ---
 
 **Happy Reading! 📚**
+
+
+## 📚 Dokumentasi Lengkap
+
+### Setup & Deployment
+- **SETUP-LENGKAP-STEP-BY-STEP.md** - Panduan setup lengkap dari awal
+- **SETUP-BACKENDLESS-TABLES.md** - Setup database Backendless
+- **SETUP-MIDTRANS-VERCEL.md** - Integrasi payment gateway
+
+### Upload Produk
+- **CARA-UPLOAD-PRODUK.md** - Cara upload produk via CSV
+- **CARA-DAPAT-LINK-GAMBAR.md** - 🖼️ Panduan mendapatkan link URL gambar
+- **products-upload.csv** - Template CSV untuk upload
+- **products-upload-example.csv** - Contoh CSV dengan data lengkap
+
+### Admin Panel
+- `/admin/products` - Kelola produk (CRUD)
+- `/admin/products/add` - Tambah produk manual
+- `/admin/upload-products` - Upload produk via CSV
+- `/create-blog` - Buat artikel blog
+
+### Fitur Khusus
+- **Countdown Timer** - Timer promo otomatis
+- **QR Code Generator** - QR code untuk setiap produk
+- **Rich Text Editor** - Editor blog dengan toolbar lengkap
+- **Midtrans Payment** - Integrasi payment gateway
+- **Backendless Database** - Cloud database real-time
+
+## 🖼️ PENTING: Input Gambar Menggunakan Link URL
+
+**Gambar cover buku menggunakan LINK URL, bukan upload file!**
+
+📖 **Baca panduan lengkap:** `CARA-DAPAT-LINK-GAMBAR.md`
+
+**Opsi hosting gambar:**
+1. **Imgur** (paling mudah) - https://imgur.com
+2. **Google Drive** (gratis 15GB) - Ubah ke format direct view
+3. **Postimages** (tanpa akun) - https://postimages.org
+4. **Cloudinary** (professional) - https://cloudinary.com
+
+**Contoh link yang benar:**
+```
+https://i.imgur.com/abc123.jpg
+https://drive.google.com/uc?export=view&id=FILE_ID
+https://i.postimg.cc/abc123/image.jpg
+```
+
+**Preview otomatis muncul di form admin saat input link!**

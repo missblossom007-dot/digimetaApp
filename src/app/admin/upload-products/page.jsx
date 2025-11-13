@@ -500,6 +500,14 @@ Ebook Contoh 2,ebook-contoh-2,Deskripsi lengkap untuk Ebook Contoh 2,https://dri
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-500">✓</span>
+                  <span><strong>cover_url:</strong> Gunakan link gambar (Imgur, Google Drive)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500">📖</span>
+                  <span>Lihat <strong>CARA-DAPAT-LINK-GAMBAR.md</strong> untuk panduan</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-green-500">✓</span>
                   <span>URL harus lengkap (https://...)</span>
                 </li>
                 <li className="flex items-start gap-2">

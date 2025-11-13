@@ -263,7 +263,7 @@ export default function EditProduct() {
             {/* Cover URL */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Cover URL
+                🖼️ Cover Gambar Buku (Link URL)
               </label>
               <input
                 type="url"
@@ -271,8 +271,25 @@ export default function EditProduct() {
                 value={formData.cover_url}
                 onChange={handleChange}
                 className="w-full p-3 border-2 border-slate-200 rounded-lg focus:border-primary focus:outline-none"
-                placeholder="https://..."
+                placeholder="https://i.imgur.com/example.jpg"
               />
+              <p className="text-xs text-slate-500 mt-1">
+                💡 Masukkan link gambar dari Google Drive, Imgur, atau hosting gambar lainnya
+              </p>
+              {/* Preview Gambar */}
+              {formData.cover_url && (
+                <div className="mt-3">
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Preview:</p>
+                  <img
+                    src={formData.cover_url}
+                    alt="Preview Cover"
+                    className="w-32 h-48 object-cover rounded-lg border-2 border-slate-200"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Link Pemesanan */}

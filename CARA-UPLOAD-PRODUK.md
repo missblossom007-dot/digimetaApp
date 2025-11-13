@@ -13,6 +13,19 @@ Berisi 5 produk ebook:
 
 ---
 
+## 🖼️ PENTING: Gambar Cover Menggunakan LINK URL!
+
+**Input gambar bukan upload file, tapi LINK URL gambar.**
+
+📖 **Baca panduan lengkap:** `CARA-DAPAT-LINK-GAMBAR.md`
+
+**Quick Guide:**
+- Imgur (paling mudah): https://imgur.com
+- Google Drive: Ubah link ke format direct view
+- Postimages: https://postimages.org
+
+---
+
 ## 🚀 Cara Upload:
 
 ### 1. Pastikan Backendless Sudah Setup:
@@ -135,10 +148,18 @@ judul,slug,harga,link_pemesanan,cover_url,deskripsi,penulis,kategori,rating,file
    - Nanti bisa diganti dengan Midtrans payment link
    - Format: `https://wa.me/6282141733187?text=Pesan`
 
-2. **Cover URL:**
-   - Gunakan Google Drive link
-   - Atau upload ke image hosting (Imgur, Cloudinary)
+2. **Cover URL (Link Gambar):**
+   - 🖼️ Input berupa LINK URL gambar (bukan upload file)
+   - Gunakan Google Drive link (ubah ke direct link)
+   - Atau upload ke image hosting: Imgur, Cloudinary, Postimages
    - Pastikan URL bisa diakses public
+   - Contoh: `https://i.imgur.com/abc123.jpg`
+   - **Cara dapat link dari Google Drive:**
+     1. Upload gambar ke Google Drive
+     2. Klik kanan → Get link → Anyone with the link
+     3. Copy link, ubah format:
+        - Dari: `https://drive.google.com/file/d/FILE_ID/view`
+        - Jadi: `https://drive.google.com/uc?export=view&id=FILE_ID`
 
 3. **File Ebook URL:**
    - Link download ebook
